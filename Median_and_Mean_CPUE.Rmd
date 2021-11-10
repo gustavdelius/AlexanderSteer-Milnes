@@ -41,10 +41,12 @@ Now we want to compare both the median and mean of the CPUE for each year.
 ```{r MedianMean, echo=FALSE}
 CPUE_Median <- CPUE_data %>%
   group_by(Year) %>%
-  summarize(Median_CPUE = median(Trip_CPUE))
+  summarize(CPUE_KgpH = median(Trip_CPUE))
 CPUE_Mean <- CPUE_data %>%
   group_by(Year) %>%
-  summarize(Mean_CPUE = mean(Trip_CPUE))
+  summarize(CPUE_KgpH = mean(Trip_CPUE))
+CPUE_Median$Type <- "Median"
+CPUE_Mean$Type <- "Mean"
 CPUE_Median
 CPUE_Mean
 ```
@@ -52,11 +54,10 @@ CPUE_Mean
 This is easier to visulaise in a plot.
 
 ```{r MedianvsMean, echo=FALSE}
-ggplot() +
-  geom_point(data = CPUE_Median, aes(x = Year, y = Median_CPUE), color = "blue") +
-  geom_line(data = CPUE_Median, aes(x = Year, y = Median_CPUE), color = "blue") +
-  geom_point(data = CPUE_Mean, aes(x = Year, y = Mean_CPUE), color = "red") +
-  geom_line(data = CPUE_Mean, aes(x = Year, y = Mean_CPUE), color = "red") +
+CPUE <- rbind(CPUE_Mean, CPUE_Median)
+ggplot(CPUE, aes(x = Year, y = CPUE_KgpH, colour = Type)) +
+  geom_point() +
+  geom_line() +
   ylab("CPUE") +
   ggtitle("Median CPUE vs Mean CPUE") +
   scale_x_continuous(breaks = seq(2003, 2014, by = 1))
